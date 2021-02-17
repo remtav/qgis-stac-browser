@@ -16,15 +16,16 @@ class SearchResult:
         return self._json.get('type', None)
 
     @property
-    def meta(self):
-        return self._json.get('meta', None)
+    def context(self):
+        return self._json.get('context', None)
 
     @property
     def next(self):
-        if self._json.get('search:metadata', None) is None:
-            return None
+        for link in self.links:
+            if link.rel == 'next':
+                return link
 
-        return self._json.get('search:metadata', {}).get('next', None)
+        return None
 
     @property
     def items(self):

@@ -48,17 +48,21 @@ class DownloadController:
         else:
             error(self.iface, f'Failed to load {item.id}; {type(e).__name__}')
 
-    def on_add_layer(self, current_step, total_steps, item,
+    def on_add_layer(self, current_step, total_steps, item, assets,
                      download_directory):
+
         self.on_progress_update(current_step, total_steps, 'ADDING_TO_LAYERS')
-        layer = QgsRasterLayer(
-            os.path.join(
-                download_directory,
-                f'{item.id}.vrt'
-            ),
-            item.id
-        )
-        QgsProject.instance().addMapLayer(layer)
+        for asset in assets:
+            asset_fname = asset.split('/')[-1].split('.')[0]
+            scene_id = item.id
+
+            layer = QgsRasterLayer(
+                asset,
+                f'{scene_id}_{asset_fname}'
+            )
+            QgsProject.instance().addMapLayer(layer)
+
+
 
     def on_destroyed(self, event):
         self._loading_closed = True

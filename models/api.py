@@ -2,6 +2,7 @@ import re
 from urllib.parse import urlparse
 from .collection import Collection
 from .link import Link
+from .auth import Auth, QueryParameterAuth, BearerTokenAuth
 from .search_result import SearchResult
 from ..utils import network
 
@@ -15,25 +16,39 @@ class API:
         ]
 
     def load(self):
-        self._data = network.request(f'{self.href}/stac')
-        self._collections = [
-            self.load_collection(c) for c in self.collection_ids
-        ]
+        self._data = network.request(self, f'{self.href}/collections')
+        self._collections = [Collection(self, c) for c in self._data['collections']]
 
-    def load_collection(self, collection_id):
-        return Collection(self,
-                          network.request(
-                              f'{self.href}/collections/{collection_id}'))
-
-    def search_items(self, collections=[], bbox=[], start_time=None,
-                     end_time=None, query=None, page=1, next_page=None, limit=50,
-                     on_next_page=None, page_limit=10):
-        if page > page_limit:
+    def load_next_page(self, next_link, on_next_page=None, current_page=2, max_pages=10):
+        if current_page > max_pages:
             return []
 
         if on_next_page is not None:
             on_next_page(self)
 
+        items = []
+        if next_link.method == 'GET':
+            search_result = SearchResult(self,
+                                         network.request(
+                                             self,
+                                             next_link.href))
+        elif next_link.method == 'POST':
+            search_result = SearchResult(self,
+                                         network.request(
+                                             self,
+                                             next_link.href,
+                                             next_link.body))
+
+        next_link = search_result.next
+        if next_link is not None:
+            items.extend(self.load_next_page(next_link, on_next_page, current_page+1, max_pages))
+
+        items.extend(search_result.items)
+
+        return items
+
+    def search_collection(self, collections=[], bbox=[], start_time=None,
+                          end_time=None, query=None, on_next_page=None, limit=50):
         if end_time is None:
             time = start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
         else:
@@ -51,21 +66,14 @@ class API:
         if query is not None:
             body['query'] = query
 
-        if next_page is not None:
-            body['next'] = next_page
-        else:
-            body['page'] = page
-
         search_result = SearchResult(self,
                                      network.request(
-                                         f'{self.href}/stac/search',
+                                         self,
+                                         f'{self.href}/search',
                                          data=body))
-
         items = search_result.items
-        if len(items) >= limit:
-            items.extend(self.search_items(collections, bbox, start_time,
-                         end_time, query, page + 1, search_result.next, limit,
-                         on_next_page=on_next_page))
+        if search_result.next is not None:
+            items.extend(self.load_next_page(search_result.next, on_next_page))
 
         return items
 
@@ -84,6 +92,8 @@ class API:
     def json(self):
         return {
             'id': self.id,
+            'title': self.title,
+            'auth': self.auth.json,
             'href': self.href,
             'data': self.data,
             'collections': [c.json for c in self.collections],
@@ -95,7 +105,7 @@ class API:
 
     @property
     def title(self):
-        return self.data.get('title', self.href)
+        return self._json.get('title', None)
 
     @property
     def href(self):
@@ -103,11 +113,24 @@ class API:
 
     @property
     def version(self):
-        return self.data.get('stac_version', None)
+        return 'v1.0.0b2'
 
     @property
     def description(self):
-        return self.data.get('description', None)
+        return 'Description'
+
+    @property
+    def auth(self):
+        d = self._json.get('auth', None)
+        if d is None:
+            return Auth(d)
+
+        if d['type'] == 'query-parameter':
+            return QueryParameterAuth(d)
+        elif d['type'] == 'bearer-token':
+            return BearerTokenAuth(d)
+
+        return Auth(d)
 
     @property
     def data(self):
@@ -117,7 +140,7 @@ class API:
 
     @property
     def links(self):
-        return [Link(l) for l in self.data.get('links', [])]
+        return [Link(link) for link in self.data.get('links', [])]
 
     @property
     def collection_ids(self):
@@ -138,7 +161,7 @@ class API:
 
     @property
     def collections(self):
-        return self._collections
+        return sorted(self._collections)
 
     def __lt__(self, other):
         return self.title.lower() < other.title.lower()

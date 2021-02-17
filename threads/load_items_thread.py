@@ -37,7 +37,7 @@ class LoadItemsThread(QThread):
                 collections = api_collection['collections']
                 self._current_collections = collections
 
-                items = api.search_items(collections,
+                items = api.search_collection(collections,
                                          self.extent,
                                          self.start_time,
                                          self.end_time,

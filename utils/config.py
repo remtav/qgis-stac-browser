@@ -40,16 +40,10 @@ class Config:
         if apis is None:
             apis = [
                 {
-                    "id": "default-staccato",
-                    "href": "https://stac.boundlessgeo.io",
-                },
-                {
-                    "id": "default-sat-api",
-                    "href": "https://sat-api.developmentseed.org",
-                },
-                {
-                    "id": "default-astraea",
-                    "href": "https://stac.astraea.earth/api/v2",
+                    "id": "earth-search",
+                    "href": "https://earth-search.aws.element84.com/v0",
+                    "title": "Earth Search",
+                    "auth": None
                 }
             ]
 
