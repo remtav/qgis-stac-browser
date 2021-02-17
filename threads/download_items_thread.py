@@ -9,7 +9,7 @@ class DownloadItemsThread(QThread):
     progress_signal = pyqtSignal(int, int, str)
     gdal_error_signal = pyqtSignal(Exception)
     error_signal = pyqtSignal(Item, Exception)
-    add_layer_signal = pyqtSignal(int, int, Item, str)
+    add_layer_signal = pyqtSignal(int, int, Item, list, str)
     finished_signal = pyqtSignal()
 
     def __init__(self, downloads, download_directory, on_progress=None,
@@ -41,31 +41,41 @@ class DownloadItemsThread(QThread):
         self.finished_signal.connect(self.on_finished)
 
     def run(self):
+        print('Running')
         gdal_path = fs.gdal_path()
         for i, download in enumerate(self.downloads):
             self._current_item = i
             item = download['item']
             options = download['options']
             try:
-                item.download(
+                raster_filenames = item.download(
                     gdal_path,
                     options,
                     self.download_directory,
                     on_update=self.on_update
                 )
+                
+                print(raster_filenames)
                 if options.get('add_to_layers', False):
+                    print('Adding Layer')
+                    
                     self.add_layer_signal.emit(
                         self._current_step,
                         self._total_steps,
                         item,
+                        raster_filenames,
                         self.download_directory
                     )
             except URLError as e:
+                print('URL Error', e)
                 self.error_signal.emit(item, e)
             except socket.timeout as e:
+                print('Socket Timeout')
                 self.error_signal.emit(item, e)
             except FileNotFoundError as e:
+                print('File Not Found Error')
                 self.gdal_error_signal.emit(e)
+        print('Finished')
         self.finished_signal.emit()
 
     def on_update(self, status):

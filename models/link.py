@@ -17,3 +17,11 @@ class Link:
     @property
     def title(self):
         return self._json.get('title', None)
+
+    @property
+    def method(self):
+        return self._json.get('method', None)
+
+    @property
+    def body(self):
+        return self._json.get('body', None)

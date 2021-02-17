@@ -10,7 +10,7 @@
 name=STAC Browser
 qgisMinimumVersion=3.0
 description=This plugin searches for and downloads assets from STAC catalogs
-version=1.1.0
+version=1.2.0
 author=Kevin Booth
 email=kevin@kb.gg
 
@@ -20,12 +20,8 @@ tracker=https://github.com/kbgg/qgis-stac-browser/issues
 repository=https://github.com/kbgg/qgis-stac-browser
 # End of mandatory metadata
 
-changelog=1.1.0
-    - Item footprints are projected onto the canvas when an item is selected
-    - Added button to view previews in an external image previewer
-    - Added ability to draw search extent on the canvas or use the canvas extent
-    - Added filtering based off cloud cover
-    - Fixed cases where HTTP error codes were hidden
+changelog=1.2.0
+    - Updated for STAC 1.0.0-beta2
 
 # Tags are comma separated with spaces allowed
 tags=web, raster

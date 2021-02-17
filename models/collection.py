@@ -20,7 +20,9 @@ class Collection:
 
     @property
     def title(self):
-        return self._json.get('title', None)
+        if self._json.get('title', None) is None:
+            return self.id
+        return f'{self._json.get("title", None)} ({self.id})'
 
     @property
     def description(self):

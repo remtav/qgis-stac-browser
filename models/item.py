@@ -4,6 +4,8 @@ import hashlib
 import tempfile
 from ..utils import network
 from ..models.link import Link
+import time
+from qgis.core import QgsRasterLayer
 
 
 class Item:
@@ -146,17 +148,7 @@ class Item:
                     raster_filenames.append(temp_filename)
                 network.download(asset.href, temp_filename)
 
-        if options.get('add_to_layers', False):
-            if on_update is not None:
-                on_update(f'Building Virtual Raster...')
-
-            arguments = [
-                os.path.join(gdal_path, 'gdalbuildvrt'),
-                '-separate',
-                os.path.join(download_directory, f'{self.id}.vrt')
-            ]
-            arguments.extend(raster_filenames)
-            subprocess.run(arguments)
+        return raster_filenames
 
     def __lt__(self, other):
         return self.id < other.id
@@ -170,7 +162,12 @@ class Asset:
 
     @property
     def is_raster(self):
-        return (self._json.get('eo:name', None) is not None)
+        raster_types = [
+            'image/tiff; application=geotiff; profile=cloud-optimized'
+        ]
+        if self.type in raster_types:
+            return True
+        return False
 
     @property
     def key(self):
@@ -178,7 +175,7 @@ class Asset:
 
     @property
     def cog(self):
-        if self.type in ['image/x.geotiff', 'image/vnd.stac.geotiff']:
+        if self.type in ['image/x.geotiff', 'image/vnd.stac.geotiff', 'image/tiff; application=geotiff; profile=cloud-optimized']:
             return f'/vsicurl/{self.href}'
 
         return None
@@ -206,7 +203,7 @@ class Asset:
     def band(self):
         if self._item.collection is None:
             return -1
-
+        
         collection_bands = self._item.collection.properties.get('eo:bands', [])
 
         for i, c in enumerate(collection_bands):
@@ -216,14 +213,14 @@ class Asset:
         return -1
 
     def __lt__(self, other):
-        if self.band != -1 and other.band != -1:
-            return self.band < other.band
+        #if self.band != -1 and other.band != -1:
+        #    return self.band < other.band
 
-        if self.band == -1 and other.band != -1:
-            return False
+        #if self.band == -1 and other.band != -1:
+        #    return False
 
-        if self.band != -1 and other.band == -1:
-            return True
+        #if self.band != -1 and other.band == -1:
+        #    return True
 
         if self.title is None or other.title is None:
             return self.key.lower() < other.key.lower()

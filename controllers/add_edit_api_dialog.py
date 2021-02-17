@@ -51,7 +51,7 @@ class AddEditAPIDialog(QtWidgets.QDialog, FORM_CLASS):
         if self.api is not None:
             api_id = self.api.id
 
-        api = API({'id': api_id, 'href': self.urlEditBox.text()})
+        api = API({'id': api_id, 'href': self.urlEditBox.text(), 'title': self.apiTitleEditBox.text()})
         self.loading_thread = LoadAPIDataThread(
             api,
             on_error=self.on_api_error,
@@ -88,6 +88,7 @@ class AddEditAPIDialog(QtWidgets.QDialog, FORM_CLASS):
             return
 
         self.urlEditBox.setText(self.api.href)
+        self.apiTitleEditBox.setText(self.api.title)
 
     def populate_auth_method_combo(self):
         self.authenticationCombo.addItem('No Auth')
