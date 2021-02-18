@@ -28,7 +28,7 @@ class DownloadSelectionDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def populate_current_item(self):
         if self._current_item_index + 1 == len(self.items):
-            self.nextButton.setText('Download')
+            self.nextButton.setText('Stream')
         else:
             self.nextButton.setText('Next')
 

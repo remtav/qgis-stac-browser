@@ -234,13 +234,14 @@ class ResultsDialog(QtWidgets.QDialog, FORM_CLASS):
         bbox = crs.transform(crs.crs4326, crs.get_project_crs(), geom.boundingBox())
 
         # TODO one day setExtent will support QgsReferencedRectangle :)
-        self.canvas.setExtent(QgsReferencedRectangle(bbox, crs.get_project_crs()))
+        self.canvas.setExtent(QgsReferencedRectangle(bbox.buffered(2000), crs.get_project_crs()))
         self.canvas.refresh()
 
     def create_rubberband(self):
         rubberband = QgsRubberBand(self.canvas, True)
-        rubberband.setColor(QColor(254, 178, 76, 63))
-        rubberband.setWidth(1)
+        rubberband.setColor(QColor(254, 178, 76, 50))
+        rubberband.setStrokeColor(QColor(0, 0, 0, 255))
+        rubberband.setWidth(5)
 
         return rubberband
 

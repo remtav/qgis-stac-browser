@@ -51,7 +51,7 @@ class AddEditAPIDialog(QtWidgets.QDialog, FORM_CLASS):
         if self.api is not None:
             api_id = self.api.id
 
-        api = API({'id': api_id, 'href': self.urlEditBox.text(), 'title': self.apiTitleEditBox.text()})
+        api = API({'id': api_id, 'href': self.urlEditBox.text(), 'title': self.apiTitleEditBox.text(),'description': self.apiDescriptionEditBox.toPlainText()})
         self.loading_thread = LoadAPIDataThread(
             api,
             on_error=self.on_api_error,

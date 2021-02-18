@@ -59,7 +59,7 @@ class API:
         body = {
             'collections': [c.id for c in collections],
             'bbox': bbox,
-            'time': time,
+            'datetime': time,
             'limit': limit,
         }
 
@@ -93,6 +93,7 @@ class API:
         return {
             'id': self.id,
             'title': self.title,
+            'description': self.description,
             'auth': self.auth.json,
             'href': self.href,
             'data': self.data,
@@ -117,7 +118,7 @@ class API:
 
     @property
     def description(self):
-        return 'Description'
+        return self._json.get('description', None)
 
     @property
     def auth(self):

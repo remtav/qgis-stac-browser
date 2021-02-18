@@ -110,7 +110,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Select Assets to Download</string>
+            <string>Select Assets to Stream</string>
            </property>
           </widget>
          </item>

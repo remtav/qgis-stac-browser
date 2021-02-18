@@ -6,8 +6,10 @@ from PyQt5.QtWidgets import (QTreeWidgetItem, QFormLayout)
 
 from qgis.core import QgsMapLayerProxyModel
 
+from .add_edit_api_dialog import AddEditAPIDialog
 from ..utils import ui
 from ..utils.logging import error
+from ..utils.config import Config
 from .extent_selector import ExtentSelector
 
 
@@ -44,15 +46,21 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
         self.searchButton.clicked.connect(self.on_search_clicked)
         self.cancelButton.clicked.connect(self.on_cancel_clicked)
 
+        self.addStacApi.clicked.connect(self.on_add_api_clicked)
+        self.removeStacApi.clicked.connect(self.on_remove_api_clicked)
+
     def populate_time_periods(self):
         now = QtCore.QDateTime.currentDateTimeUtc()
         self.endPeriod.setDateTime(now)
 
     def populate_collection_list(self):
         self._api_tree_model = QStandardItemModel(self.treeView)
+        self.treeView.clear()
         for api in self.apis:
             api_node = QTreeWidgetItem(self.treeView)
             api_node.setText(0, f'{api.title}')
+            api_node.setData(0, 256, f'{api.id}')  # 256: QtUserRole
+            api_node.setData(0, 3, f'{api.description}')  # TODO
             api_node.setFlags(
                 api_node.flags()
                 | QtCore.Qt.ItemIsTristate
@@ -158,6 +166,65 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
 
         if value < self.cloudCoverMaxSpin.value():
             self.cloudCoverMaxSpin.setValue(min_value + 0.01)
+
+    def on_add_api_clicked(self):
+        dialog = AddEditAPIDialog(
+            data={'api': None},
+            hooks={
+                "remove_api": self.remove_api,
+                "add_api": self.add_api,
+                "edit_api": self.edit_api
+            },
+            parent=self,
+            iface=self.iface
+        )
+        dialog.exec_()
+
+    def on_remove_api_clicked(self):
+        self.remove_api()
+
+    def add_api(self, api):
+        config = Config()
+        apis = config.apis
+        apis.append(api)
+        config.apis = apis
+        config.save()
+
+        self.data['apis'] = config.apis
+
+        self.populate_collection_list()
+
+    def remove_api(self):
+        config = Config()
+        new_apis = []
+        api_id = self.treeView.currentItem().data(0, 256)
+
+        for a in config.apis:
+            if a.id == api_id:
+                continue
+            new_apis.append(a)
+
+        config.apis = new_apis
+        config.save()
+
+        self.data['apis'] = config.apis
+        self.populate_collection_list()
+
+    def edit_api(self, api):
+        config = Config()
+        new_apis = []
+
+        for a in config.apis:
+            if a.id == api.id:
+                continue
+            new_apis.append(a)
+        new_apis.append(api)
+        config.apis = new_apis
+        config.save()
+
+        self.data['apis'] = config.apis
+        self.populate_api_list()
+        self.populate_api_details()
 
     def closeEvent(self, event):
         if event.spontaneous():

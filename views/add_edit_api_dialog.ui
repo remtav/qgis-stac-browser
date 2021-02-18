@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>STAC Browser</string>
+   <string>Add a STAC API</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -26,7 +26,7 @@
          <property name="labelAlignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="apiUrlLabel">
            <property name="text">
             <string>URL</string>
@@ -36,10 +36,10 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QLineEdit" name="urlEditBox"/>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="apiAuthLabel">
            <property name="text">
             <string>Authentication</string>
@@ -49,7 +49,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QComboBox" name="authenticationCombo">
            <property name="maximumSize">
             <size>
@@ -68,6 +68,41 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="apiTitleEditBox"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="apiDescriptionLabel">
+           <property name="text">
+            <string>Description (facultative)</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QTextEdit" name="apiDescriptionEditBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>316</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>316</width>
+             <height>80</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
