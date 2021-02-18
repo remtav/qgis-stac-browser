@@ -40,9 +40,13 @@ class Config:
         if apis is None:
             apis = [
                 {
-                    "id": "earth-search",
-                    "href": "https://earth-search.aws.element84.com/v0",
-                    "title": "Earth Search",
+                    # "id": "earth-search",
+                    # "href": "https://earth-search.aws.element84.com/v0",
+                    # "title": "Earth Search",
+                    # "auth": None
+                    "id": "datacube",
+                    "href": "https://datacube.services.geo.ca/api",
+                    "title": "Data Cube NRCan",
                     "auth": None
                 }
             ]
