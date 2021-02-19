@@ -186,3 +186,4 @@ class DownloadSelectionDialog(QtWidgets.QDialog, FORM_CLASS):
     def closeEvent(self, event):
         if event.spontaneous():
             self.reject()
+
