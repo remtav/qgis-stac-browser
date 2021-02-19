@@ -218,7 +218,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Search Parameters</string>
+          <string>Search filters</string>
          </property>
         </widget>
        </item>

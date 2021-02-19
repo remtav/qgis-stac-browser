@@ -25,6 +25,12 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>20</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QLineEdit" name="lineEdit"/>
      </item>
@@ -38,7 +44,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>30</width>
+         <width>50</width>
          <height>30</height>
         </size>
        </property>
