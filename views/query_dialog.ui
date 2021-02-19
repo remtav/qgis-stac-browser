@@ -220,32 +220,6 @@
     </property>
    </column>
   </widget>
-  <widget class="QPushButton" name="apiAddButton">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>34</y>
-     <width>89</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>+</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="apiRemoveButton">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>34</y>
-     <width>89</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>-</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
@@ -282,6 +256,32 @@
       </property>
       <property name="text">
        <string>Deselect All</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>34</y>
+     <width>168</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="apiAddButton">
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="apiRemoveButton">
+      <property name="text">
+       <string>-</string>
       </property>
      </widget>
     </item>

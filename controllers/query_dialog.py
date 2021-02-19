@@ -63,8 +63,8 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
         for api in self.apis:
             api_node = QTreeWidgetItem(self.treeView)
             api_node.setText(0, f'{api.title}')
-            api_node.setData(0, 256, f'{api.id}')  # 256: QtUserRole
-            api_node.setData(0, 3, f'{api.id}<br>{api.version}')  # TODO
+            api_node.setData(0, 3, f'URL: {api.href}<br>Title: {api.title}<br>STAC Version: {api.version}<br>'
+                                   f'Description: {api.description}')
             api_node.setFlags(
                 api_node.flags()
                 | QtCore.Qt.ItemIsTristate
