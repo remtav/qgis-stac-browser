@@ -65,6 +65,8 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
             api_node.setText(0, f'{api.title}')
             api_node.setData(0, 256, f'{api.id}')  # 256: QtUserRole
             api_node.setData(0, 3, f'{api.description}')  # TODO
+            api_node.setData(0, 3, f'URL: {api.href}<br>Title: {api.title}<br>STAC Version: {api.version}<br>'
+                                   f'Description: {api.description}')
             api_node.setFlags(
                 api_node.flags()
                 | QtCore.Qt.ItemIsTristate
@@ -129,17 +131,20 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
 
     @property
     def query_filters(self):
-        if not (self.enableFiltersCheckBox.isChecked() and self.enableGSDcheckBox.isChecked()) :
+        filters = {}
+        if self.enableFiltersCheckBox.isChecked():
+            filters['eo:cloud_cover'] = {'gte': self.cloudCoverMinSpin.value(),'lte': self.cloudCoverMaxSpin.value()},
+
+        if self.enableGSDCheckBox.isChecked():
+            filters['gsd'] = {'gte': self.GSDminSpinBox.value(), 'lte': self.GSDmaxSpinBox.value()}
+            #filters['gsd'] = {'eq': "1.0"}
+
+        print(filters)
+
+        if filters:
+            return filters
+        else:
             return None
-
-
-
-        return {
-            'eo:cloud_cover': {
-                'gte': self.cloudCoverMinSpin.value(),
-                'lte': self.cloudCoverMaxSpin.value(),
-            }
-        }
 
     def on_search_clicked(self):
         valid = self.validate()
