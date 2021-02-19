@@ -382,6 +382,71 @@
            </property>
           </widget>
          </item>
+         <item row="12" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>GSD</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QCheckBox" name="enableGSDcheckBox">
+           <property name="text">
+            <string>Enable GSD filter</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <spacer name="verticalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="13" column="1">
+          <widget class="QDoubleSpinBox" name="GSDminSpinBox">
+           <property name="prefix">
+            <string>min </string>
+           </property>
+           <property name="suffix">
+            <string> m</string>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QDoubleSpinBox" name="GSDmaxSpinBox">
+           <property name="prefix">
+            <string>max </string>
+           </property>
+           <property name="suffix">
+            <string> m </string>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -402,6 +467,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>8</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">

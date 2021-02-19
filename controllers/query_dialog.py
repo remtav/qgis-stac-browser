@@ -41,8 +41,12 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.selectAllCollectionsButton.clicked.connect(self.on_select_all_collections_clicked)
         self.deselectAllCollectionsButton.clicked.connect(self.on_deselect_all_collections_clicked)
+
         self.cloudCoverMinSpin.valueChanged.connect(self.on_cloud_cover_min_spin_changed)
         self.cloudCoverMaxSpin.valueChanged.connect(self.on_cloud_cover_max_spin_changed)
+        self.GSDminSpinBox.valueChanged.connect(self.on_gsd_min_spin_changed)
+        self.GSDmaxSpinBox.valueChanged.connect(self.on_gsd_max_spin_changed)
+
         self.searchButton.clicked.connect(self.on_search_clicked)
         self.cancelButton.clicked.connect(self.on_cancel_clicked)
 
@@ -125,8 +129,10 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
 
     @property
     def query_filters(self):
-        if not self.enableFiltersCheckBox.isChecked():
+        if not (self.enableFiltersCheckBox.isChecked() and self.enableGSDcheckBox.isChecked()) :
             return None
+
+
 
         return {
             'eo:cloud_cover': {
@@ -164,8 +170,18 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
     def on_cloud_cover_max_spin_changed(self, value):
         min_value = self.cloudCoverMinSpin.value()
 
-        if value < self.cloudCoverMaxSpin.value():
+        if value < self.cloudCoverMinSpin.value():
             self.cloudCoverMaxSpin.setValue(min_value + 0.01)
+
+    def on_gsd_min_spin_changed(self, value):
+        max_value = self.GSDmaxSpinBox.value()
+        if value >= self.GSDmaxSpinBox.value():
+            self.GSDminSpinBox.setValue(max_value - 0.1)
+
+    def on_gsd_max_spin_changed(self, value):
+        min_value = self.GSDminSpinBox.value()
+        if value <= self.GSDminSpinBox.value():
+            self.GSDmaxSpinBox.setValue(min_value + 0.1)
 
     def on_add_api_clicked(self):
         dialog = AddEditAPIDialog(
