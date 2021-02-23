@@ -89,6 +89,7 @@ class AddEditAPIDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.urlEditBox.setText(self.api.href)
         self.apiTitleEditBox.setText(self.api.title)
+        self.apiDescriptionEditBox.setText(self.api.description)
 
     def populate_auth_method_combo(self):
         self.authenticationCombo.addItem('No Auth')

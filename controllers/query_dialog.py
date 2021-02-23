@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (QTreeWidgetItem, QFormLayout)
 from qgis.core import QgsMapLayerProxyModel
 
 from .add_edit_api_dialog import AddEditAPIDialog
+from .configure_apis_dialog import ConfigureAPIDialog
 from ..utils import ui
 from ..utils.logging import error
 from ..utils.config import Config
@@ -50,12 +51,25 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
         self.searchButton.clicked.connect(self.on_search_clicked)
         self.cancelButton.clicked.connect(self.on_cancel_clicked)
 
+        self.label_6.setToolTip(f'Ground Sample Distance')
+
         self.addStacApi.clicked.connect(self.on_add_api_clicked)
         self.removeStacApi.clicked.connect(self.on_remove_api_clicked)
 
+        self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.treeView.customContextMenuRequested.connect(self.contextMenu)
+
+
     def populate_time_periods(self):
-        now = QtCore.QDateTime.currentDateTimeUtc()
-        self.endPeriod.setDateTime(now)
+            now = QtCore.QDateTime.currentDateTimeUtc()
+            self.endPeriod.setDateTime(now)
+
+    def contextMenu(self, event):
+        self.contextMenu = QtWidgets.QMenu(self.treeView)
+        edit = self.contextMenu.addAction("Edit...")
+        edit.triggered.connect(self.on_edit_api_clicked)
+        self.contextMenu.exec_(self.treeView.viewport().mapToGlobal(event))
+
 
     def populate_collection_list(self):
         self._api_tree_model = QStandardItemModel(self.treeView)
@@ -64,9 +78,7 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
             api_node = QTreeWidgetItem(self.treeView)
             api_node.setText(0, f'{api.title}')
             api_node.setData(0, 256, f'{api.id}')  # 256: QtUserRole
-            api_node.setData(0, 3, f'{api.description}')  # TODO
-            api_node.setData(0, 3, f'URL: {api.href}<br>Title: {api.title}<br>STAC Version: {api.version}<br>'
-                                   f'Description: {api.description}')
+            api_node.setData(0, 3, f'<b>Title:</b> <i>{api.title}<br></i><b>Description: </b><i>{api.description}</i><br>------------------------------------------------------<br><b>STAC Version: </b><i>{api.version}</i><br><b>URL: </b><i>{api.href}</i>')
             api_node.setFlags(
                 api_node.flags()
                 | QtCore.Qt.ItemIsTristate
@@ -201,6 +213,19 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
         )
         dialog.exec_()
 
+    def on_edit_api_clicked(self):
+        dialog = AddEditAPIDialog(
+            data={'api': self.selected_api},
+            hooks={
+                "remove_api": self.remove_api,
+                "add_api": self.add_api,
+                "edit_api": self.edit_api
+            },
+            parent=self,
+            iface=self.iface
+        )
+        dialog.exec_()
+
     def on_remove_api_clicked(self):
         self.remove_api()
 
@@ -244,12 +269,20 @@ class QueryDialog(QtWidgets.QDialog, FORM_CLASS):
         config.save()
 
         self.data['apis'] = config.apis
-        self.populate_api_list()
-        self.populate_api_details()
+
+        self.populate_collection_list()
 
     def closeEvent(self, event):
         if event.spontaneous():
             self.hooks['on_close']()
+
+    @property
+    def selected_api(self):
+        api_id = self.treeView.currentItem().data(0,256)
+        for api in self.apis:
+            if api.id == api_id:
+                return api
+        return None
 
     def _toggle_all_collections_checked(self, checked):
         state = QtCore.Qt.Checked if checked else QtCore.Qt.Unchecked
